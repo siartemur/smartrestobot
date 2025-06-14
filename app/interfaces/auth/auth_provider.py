@@ -1,3 +1,4 @@
+# ✅ interfaces/auth/auth_provider.py
 from typing import Protocol
 
 class AuthProvider(Protocol):

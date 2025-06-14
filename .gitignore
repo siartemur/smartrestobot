@@ -7,9 +7,7 @@ __pycache__/
 # VS Code
 .vscode/
 
-# Logs
-*.log
-app/logs/
+
 *.csv
 
 # OS
@@ -17,5 +15,5 @@ app/logs/
 Thumbs.db
 
 # Models / Large files
-app/static/
+
 models/

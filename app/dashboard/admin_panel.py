@@ -1,13 +1,13 @@
-# app/dashboard/admin_panel.py
-
+import matplotlib
+matplotlib.use("Agg")  # Headless backend
 import pandas as pd
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
-from datetime import datetime
 import matplotlib.dates as mdates
 
 METRICS_CSV = "app/logs/metrics.csv"
+BAD_RESPONSES_CSV = "app/logs/bad_responses.csv"
 
 def generate_base64_image(fig):
     buf = BytesIO()
@@ -21,16 +21,25 @@ def generate_base64_image(fig):
 
 def generate_metrics_dashboard():
     try:
-        df = pd.read_csv(METRICS_CSV, header=None)
-        df.columns = [
-            "timestamp", "restaurant_id", "model",
-            "prompt_length", "response_length", "token_usage", "latency_ms"
+        df = pd.read_csv(METRICS_CSV)
+
+        expected_columns = [
+            "timestamp", "restaurant_id", "agent_type", "prompt_version",
+            "prompt_name", "model", "prompt_length", "response_length",
+            "token_usage", "latency_ms", "bad"
         ]
-        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        if list(df.columns) != expected_columns:
+            return {"error": f"metrics.csv sütunları beklenen yapıda değil. Beklenen: {expected_columns}"}
+
+        # Tip dönüşümü ve eksik veri kontrolü
+        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+        df = df.dropna(subset=["timestamp", "prompt_length", "response_length", "latency_ms"])
+
+        df[["prompt_length", "response_length", "latency_ms"]] = df[["prompt_length", "response_length", "latency_ms"]].astype(float)
 
         charts = {}
 
-        # 🎯 Grafik 1: Latency vs Time
+        # 🎯 Grafik 1: Yanıt Süresi Zaman Çizelgesi
         fig1, ax1 = plt.subplots()
         df_sorted = df.sort_values("timestamp")
         ax1.plot(df_sorted["timestamp"], df_sorted["latency_ms"], marker='o')
@@ -41,7 +50,7 @@ def generate_metrics_dashboard():
         fig1.autofmt_xdate()
         charts["latency_chart"] = generate_base64_image(fig1)
 
-        # 🎯 Grafik 2: Prompt vs Response Length Scatter
+        # 🎯 Grafik 2: Prompt vs Yanıt Uzunluğu
         fig2, ax2 = plt.subplots()
         ax2.scatter(df["prompt_length"], df["response_length"], alpha=0.6)
         ax2.set_title("Prompt vs Yanıt Uzunluğu")
@@ -49,14 +58,14 @@ def generate_metrics_dashboard():
         ax2.set_ylabel("Yanıt Uzunluğu (char)")
         charts["length_chart"] = generate_base64_image(fig2)
 
-        # 🎯 Grafik 3: Model Dağılımı (Pie Chart)
-        model_counts = df["model"].value_counts()
+        # 🎯 Grafik 3: Model Dağılımı
         fig3, ax3 = plt.subplots()
-        ax3.pie(model_counts, labels=model_counts.index, autopct='%1.1f%%', startangle=140)
+        df["model"].value_counts().plot(kind="pie", autopct='%1.1f%%', startangle=140, ax=ax3)
+        ax3.set_ylabel("")
         ax3.set_title("Kullanılan Model Dağılımı")
         charts["model_chart"] = generate_base64_image(fig3)
 
-        # 🎯 Grafik 4: Restoran Bazlı Chat Sayısı (Bar Chart)
+        # 🎯 Grafik 4: Restoranlara Göre Chat Sayısı
         fig4, ax4 = plt.subplots()
         df["restaurant_id"].value_counts().plot(kind="bar", ax=ax4)
         ax4.set_title("Restoranlara Göre Chat Sayısı")
@@ -69,15 +78,17 @@ def generate_metrics_dashboard():
     except Exception as e:
         return {"error": str(e)}
 
-BAD_RESPONSES_CSV = "app/logs/bad_responses.csv"
 
 def generate_bad_response_dashboard():
     try:
-        df = pd.read_csv(BAD_RESPONSES_CSV, header=None)
-        df.columns = [
-            "timestamp", "restaurant_id", "prompt", "response", "reason"
-        ]
-        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        df = pd.read_csv(BAD_RESPONSES_CSV)
+
+        expected_columns = ["timestamp", "restaurant_id", "prompt", "response", "reason"]
+        if list(df.columns) != expected_columns:
+            return {"error": f"bad_responses.csv sütunları beklenen yapıda değil. Beklenen: {expected_columns}"}
+
+        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+        df = df.dropna(subset=["timestamp", "restaurant_id", "reason"])
 
         charts = {}
 
@@ -90,7 +101,7 @@ def generate_bad_response_dashboard():
         ax1.set_ylabel("Kötü Yanıt")
         charts["daily_bad_responses"] = generate_base64_image(fig1)
 
-        # 🎯 Grafik 2: Neden bazlı kötü yanıt dağılımı
+        # 🎯 Grafik 2: Kötü yanıt nedenleri
         fig2, ax2 = plt.subplots()
         df["reason"].value_counts().plot(kind="bar", ax=ax2)
         ax2.set_title("Kötü Yanıt Nedenleri")
@@ -98,7 +109,7 @@ def generate_bad_response_dashboard():
         ax2.set_ylabel("Adet")
         charts["reason_distribution"] = generate_base64_image(fig2)
 
-        # 🎯 Grafik 3: Restoran bazlı kötü yanıt sayısı
+        # 🎯 Grafik 3: Restoran bazlı kötü yanıtlar
         fig3, ax3 = plt.subplots()
         df["restaurant_id"].value_counts().plot(kind="bar", ax=ax3)
         ax3.set_title("Restoranlara Göre Kötü Yanıt Sayısı")

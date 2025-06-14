@@ -1,8 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from fastapi.openapi.utils import get_openapi
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from app.api import chat, auth, admin, ab_test, reservation  # ✅ eklendi
 
-from app.api import chat, auth, admin, ab_test
+# HTML template klasörü
+templates = Jinja2Templates(directory="app/templates")
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -14,24 +19,29 @@ def create_app() -> FastAPI:
     # ✅ CORS middleware
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # Geliştirme sürecinde geniş tutuldu, prod'da sınırla
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # ✅ Statik dosyalar (CSS, JS, embed widget vs.)
+    app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
     # ✅ Router'lar
     app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
     app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
     app.include_router(chat.router, prefix="/api", tags=["Chat"])
     app.include_router(ab_test.router, prefix="/api", tags=["A/B Test"])
+    app.include_router(reservation.router, prefix="/api", tags=["Reservation"])  # ✅ eklendi
 
-    # ✅ Sağlık kontrolü
-    @app.get("/")
-    def health_check():
-        return {"message": "✅ SmartRestoBot API is running."}
 
-    # ✅ JWT Bearer Token Swagger UI tanımı
+    # ✅ Ana sayfa (chat widget test için)
+    @app.get("/", response_class=HTMLResponse)
+    async def serve_index(request: Request):
+        return templates.TemplateResponse("index.html", {"request": request})
+
+    # ✅ Swagger UI için JWT Bearer token tanımı
     def custom_openapi():
         if app.openapi_schema:
             return app.openapi_schema
@@ -62,5 +72,5 @@ def create_app() -> FastAPI:
 
     return app
 
-# Uygulama başlatma noktası
+# ✅ Uygulama başlatma noktası
 app = create_app()

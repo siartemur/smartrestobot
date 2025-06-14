@@ -18,6 +18,9 @@ def generate_ab_test_report():
     if ab_df.empty:
         return {"error": "No A/B test data found in metrics.csv."}
 
+    # 🛠️ String olan sayısal sütunları float'a dönüştür
+    ab_df[["latency_ms", "token_usage", "is_bad_response"]] = ab_df[["latency_ms", "token_usage", "is_bad_response"]].astype(float)
+
     report = (
         ab_df
         .groupby("prompt_version")
@@ -34,7 +37,7 @@ def generate_ab_test_report():
         .reset_index()
     )
 
-    # Yüzde formatına çevirelim
     report["bad_response_rate"] = (report["bad_response_rate"] * 100).round(2)
 
     return report.to_dict(orient="records")
+

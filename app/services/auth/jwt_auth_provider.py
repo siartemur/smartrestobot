@@ -1,14 +1,14 @@
-import jwt
+# ✅ services/auth/jwt_auth_provider.py
 import os
+import jwt
 from datetime import datetime, timedelta
 from app.interfaces.auth.auth_provider import AuthProvider
 
-# Config ayarları (env üzerinden veya hardcoded olarak ayarlanabilir)
 JWT_SECRET = os.getenv("JWT_SECRET", "super-secret-key")
-JWT_ALGORITHM = "HS256"
-JWT_EXPIRE_MINUTES = 60
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", 60))
 
-# Basit kullanıcı veri yapısı
+# Dummy in-memory user db for prototyping only
 USERS_DB = {}
 
 class JWTAuthProvider(AuthProvider):
@@ -26,10 +26,9 @@ class JWTAuthProvider(AuthProvider):
 
     def verify_token(self, token: str) -> dict:
         try:
-            decoded = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-            return decoded
+            return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         except jwt.PyJWTError:
-            raise ValueError("Geçersiz veya süresi dolmuş token.")
+            raise ValueError("Geçersiz veya süre dolmuş token.")
 
     def _generate_token(self, email: str) -> str:
         payload = {
