@@ -1,0 +1,20 @@
+[
+  {
+    "table_code": "DUB-01",
+    "capacity": 2,
+    "location": "Window",
+    "restaurant_id": 1
+  },
+  {
+    "table_code": "DUB-02",
+    "capacity": 4,
+    "location": "Center",
+    "restaurant_id": 1
+  },
+  {
+    "table_code": "DUB-03",
+    "capacity": 6,
+    "location": "Patio",
+    "restaurant_id": 1
+  }
+]

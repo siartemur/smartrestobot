@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from app.api import chat, auth, admin, ab_test, reservation  # ✅ eklendi
+from app.api import chat, auth, admin, ab_test, table_router, reservation_router
 
 # HTML template klasörü
 templates = Jinja2Templates(directory="app/templates")
@@ -33,8 +33,8 @@ def create_app() -> FastAPI:
     app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
     app.include_router(chat.router, prefix="/api", tags=["Chat"])
     app.include_router(ab_test.router, prefix="/api", tags=["A/B Test"])
-    app.include_router(reservation.router, prefix="/api", tags=["Reservation"])  # ✅ eklendi
-
+    app.include_router(table_router.router)
+    app.include_router(reservation_router.router)
 
     # ✅ Ana sayfa (chat widget test için)
     @app.get("/", response_class=HTMLResponse)

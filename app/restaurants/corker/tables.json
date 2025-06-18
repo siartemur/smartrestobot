@@ -1,0 +1,20 @@
+[
+  {
+    "table_code": "COR-01",
+    "capacity": 2,
+    "location": "Corner",
+    "restaurant_id": 2
+  },
+  {
+    "table_code": "COR-02",
+    "capacity": 4,
+    "location": "Window",
+    "restaurant_id": 2
+  },
+  {
+    "table_code": "COR-03",
+    "capacity": 8,
+    "location": "Private Room",
+    "restaurant_id": 2
+  }
+]

@@ -5,18 +5,27 @@ from langchain_core.runnables import Runnable
 def get_general_chain() -> Runnable:
     prompt = ChatPromptTemplate.from_template(
         """
-        Kullanıcının mesajı genel bilgi içindir:
+        Kullanıcının restoran hakkında bilgi sorusu var:
 
-        "{message}"
+        [Konuşma Geçmişi]
+        {chat_history}
 
-        Eğer mesaj şu konulardaysa:
-        - Açılış saatleri
-        - Lokasyon
-        - Wi-Fi veya otopark durumu
-        - Bayram/özel gün çalışma durumu
+        [Yeni Mesaj]
+        {message}
 
-        Bilgilendirici ve kibar şekilde cevapla. Eğer mesaj belirsizse, hangi konuda bilgi istediğini sor.
+        [Restoran Statik Bilgisi]
+        {static_info}
+
+        Lütfen sadece yukarıdaki restoran bilgilerine dayanarak kısa, kibar ve yardımsever bir yanıt ver.
+        - Açılış saatleri, konum, Wi-Fi, otopark, özel günler gibi konuları kapsayabilir.
+        - Mesaj çok genel veya belirsizse, kullanıcıdan netleştirmesini iste.
+
+        Cevabın sade ve doğal olsun.
         """
     )
-    llm = ChatOpenAI(model="gpt-4", temperature=0.3)
+    llm = ChatOpenAI(
+        model="gpt-4",
+        temperature=0.3,
+        max_tokens=150
+    )
     return prompt | llm

@@ -1,5 +1,3 @@
-# ✅ app/api/dependencies.py
-
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -9,11 +7,16 @@ import os
 from app.database import models
 from app.database.db import get_db
 
+# 👇 Memory Manager importu (yeni)
+from app.services.core.memory_manager import InMemoryMemoryManager
+
+# JWT ayarları
 SECRET_KEY = os.getenv("JWT_SECRET", "super-secret-key")
 ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
+# ✅ Auth
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -28,24 +31,17 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise HTTPException(status_code=401, detail="User not found")
     return user
 
-
-
-#def get_admin_user(current_user: models.User = Depends(get_current_user)):
-#    if not current_user.is_admin:
-#        raise HTTPException(
-#            status_code=status.HTTP_403_FORBIDDEN,
-#            detail="Admin privileges required"
-#        )
-#    return current_user
-
-
-
-# ✅ app/api/dependencies.py içinde TEST için geçici get_admin_user
+# ✅ Geçici admin
 def get_admin_user():
     return models.User(
         id=1,
         name="Test Admin",
         email="admin@test.com",
         is_admin=True
-        # ❌ password, created_at, updated_at gibi alanları geçme
     )
+
+# ✅ Memory Manager — Singleton olarak sadece 1 kez oluşturulacak
+memory_manager = InMemoryMemoryManager()
+
+def get_memory_manager():
+    return memory_manager

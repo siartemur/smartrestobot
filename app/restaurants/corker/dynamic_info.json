@@ -1,0 +1,8 @@
+{
+  "available_tables": [
+    { "id": "C1", "location": "window", "capacity": 2 },
+    { "id": "C3", "location": "center", "capacity": 4 }
+  ],
+  "reservations_today": 9,
+  "last_updated": "2025-06-18T13:45:00"
+}
