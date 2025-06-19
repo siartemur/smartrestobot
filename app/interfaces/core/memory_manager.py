@@ -1,3 +1,4 @@
+# ✅ MemoryManager arayüzü
 from typing import Protocol
 
 class MemoryManager(Protocol):

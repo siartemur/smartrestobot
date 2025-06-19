@@ -17,11 +17,9 @@ class TableServiceImpl:
     def get_table(self, table_id: int) -> Table:
         return self.db.query(Table).filter(Table.id == table_id).first()
 
-    def get_available_tables(self, restaurant_id: int, res_date: date, res_time: time, guest_count: int) -> List[Table]:
-        # Tüm aktif masaları al
+    def get_available_tables(self, restaurant_id: int, res_date: date, res_time: time, guest_count: int, preferred_location: str = None) -> List[Table]:
         all_tables = self.get_all_tables(restaurant_id)
 
-        # Belirtilen tarih ve saatte rezerve edilen masaların ID’lerini al
         reserved_ids = {
             r.table_id for r in self.db.query(Reservation)
             .join(Table, Reservation.table_id == Table.id)
@@ -33,11 +31,19 @@ class TableServiceImpl:
             ).all()
         }
 
-        # Uygun ve yeterli kapasiteye sahip masaları döndür
-        return [
+        filtered_tables = [
             t for t in all_tables
             if t.id not in reserved_ids and t.capacity >= guest_count
         ]
+
+        # ✅ Eğer konum tercihi varsa ona göre filtrele (örn. "Window")
+        if preferred_location:
+            filtered_tables = [
+                t for t in filtered_tables
+                if t.location.lower() == preferred_location.lower()
+            ] or filtered_tables  # Eğer konum uygun değilse fallback olarak tüm uygunlar
+
+        return filtered_tables
 
     def create_table(self, table_data) -> Table:
         new_table = Table(

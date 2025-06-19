@@ -10,9 +10,11 @@ from app.database.db import get_db
 from app.database import models
 from app.services.core.quality_monitor import CSVQualityMonitor
 from app.services.core.logger_service import log_response_metrics
+from app.services.core.memory_manager import InMemoryMemoryManager
+
 from app.agents.reservation_agent import ReservationAgent
 from app.agents.general_agent import GeneralAgent
-from app.services.core.memory_manager import InMemoryMemoryManager  # ✅ Memory servisi
+from app.agents.menu_agent import MenuAgent  # ✅ EKLENDİ
 
 # ✅ .env yükle
 load_dotenv()
@@ -42,6 +44,9 @@ async def chat_endpoint(chat: ChatRequest, db: Session = Depends(get_db)):
         if any(keyword in message_lower for keyword in ["rezervasyon", "ayır", "masa", "kişilik"]):
             agent = ReservationAgent(memory_manager=memory, db_session=db)
             agent_type = "reservation"
+        elif any(keyword in message_lower for keyword in ["menü", "menu", "vegan", "vejetaryen", "glutensiz", "içerik", "yemek"]):
+            agent = MenuAgent(memory_manager=memory)
+            agent_type = "menu"
         else:
             agent = GeneralAgent(memory_manager=memory)
             agent_type = "general"
@@ -94,7 +99,6 @@ async def chat_endpoint(chat: ChatRequest, db: Session = Depends(get_db)):
 
     except Exception as e:
         return {"response": f"Hata: {str(e)}"}
-
 
 
 @router.get("/chat/history")

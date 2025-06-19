@@ -1,9 +1,1 @@
-{
-  "available_tables": [
-    { "id": "T1", "location": "window", "capacity": 2 },
-    { "id": "T3", "location": "window", "capacity": 4 },
-    { "id": "T5", "location": "center", "capacity": 4 }
-  ],
-  "reservations_today": 17,
-  "last_updated": "2025-06-18T15:45:00"
-}
+{}

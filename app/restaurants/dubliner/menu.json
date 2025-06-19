@@ -1,0 +1,121 @@
+{
+  "categories": [
+    {
+      "name": "Starters",
+      "items": [
+        {
+          "name": "Soup of the Day",
+          "description": "Served with freshly baked sourdough bread.",
+          "price": 6.50,
+          "vegetarian": true,
+          "vegan": true,
+          "allergens": ["gluten"]
+        },
+        {
+          "name": "Garlic Mushrooms",
+          "description": "Sautéed button mushrooms in a creamy garlic sauce.",
+          "price": 7.00,
+          "vegetarian": true,
+          "vegan": false,
+          "allergens": ["dairy"]
+        },
+        {
+          "name": "Buffalo Chicken Wings",
+          "description": "Spicy wings served with blue cheese dip and celery sticks.",
+          "price": 8.95,
+          "vegetarian": false,
+          "vegan": false,
+          "allergens": ["dairy"]
+        }
+      ]
+    },
+    {
+      "name": "Main Courses",
+      "items": [
+        {
+          "name": "Grilled Ribeye Steak",
+          "description": "10oz Irish beef steak with peppercorn sauce, chips and salad.",
+          "price": 24.00,
+          "vegetarian": false,
+          "vegan": false,
+          "allergens": ["dairy"]
+        },
+        {
+          "name": "Vegan Thai Green Curry",
+          "description": "Seasonal vegetables in a fragrant coconut curry served with jasmine rice.",
+          "price": 16.00,
+          "vegetarian": true,
+          "vegan": true,
+          "allergens": ["soy", "coconut"]
+        },
+        {
+          "name": "Traditional Fish & Chips",
+          "description": "Beer-battered haddock, chunky chips, mushy peas, and tartar sauce.",
+          "price": 17.50,
+          "vegetarian": false,
+          "vegan": false,
+          "allergens": ["gluten", "fish", "egg"]
+        }
+      ]
+    },
+    {
+      "name": "Desserts",
+      "items": [
+        {
+          "name": "Chocolate Fudge Cake",
+          "description": "Rich dark chocolate cake with vanilla ice cream.",
+          "price": 7.00,
+          "vegetarian": true,
+          "vegan": false,
+          "allergens": ["gluten", "dairy", "egg"]
+        },
+        {
+          "name": "Fruit Salad",
+          "description": "A selection of seasonal fresh fruits.",
+          "price": 5.50,
+          "vegetarian": true,
+          "vegan": true,
+          "allergens": []
+        },
+        {
+          "name": "Cheesecake of the Day",
+          "description": "Ask your server for today’s selection.",
+          "price": 6.75,
+          "vegetarian": true,
+          "vegan": false,
+          "allergens": ["dairy", "gluten"]
+        }
+      ]
+    },
+    {
+      "name": "Drinks",
+      "items": [
+        {
+          "name": "Coca-Cola (330ml)",
+          "description": "Classic soft drink, served chilled.",
+          "price": 2.50,
+          "vegetarian": true,
+          "vegan": true,
+          "allergens": []
+        },
+        {
+          "name": "Sparkling Water",
+          "description": "Carbonated mineral water.",
+          "price": 2.00,
+          "vegetarian": true,
+          "vegan": true,
+          "allergens": []
+        },
+        {
+          "name": "Guinness Pint",
+          "description": "Iconic Irish stout beer.",
+          "price": 5.80,
+          "vegetarian": false,
+          "vegan": false,
+          "allergens": ["barley"]
+        }
+      ]
+    }
+  ],
+  "notes": "Please inform your server of any allergies or dietary restrictions."
+}

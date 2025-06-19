@@ -1,7 +1,13 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+
+
 import json
 from sqlalchemy.orm import Session
 from app.database.db import SessionLocal
 from app.database.models import Table, Restaurant
+
 
 def get_or_create_restaurant(db: Session, name: str) -> int:
     restaurant = db.query(Restaurant).filter_by(name=name).first()

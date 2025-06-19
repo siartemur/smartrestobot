@@ -3,18 +3,35 @@
     "table_code": "DUB-01",
     "capacity": 2,
     "location": "Window",
+    "features": ["quiet", "romantic", "natural light"],
     "restaurant_id": 1
   },
   {
     "table_code": "DUB-02",
     "capacity": 4,
     "location": "Center",
+    "features": ["near bar", "high traffic"],
     "restaurant_id": 1
   },
   {
     "table_code": "DUB-03",
     "capacity": 6,
     "location": "Patio",
+    "features": ["open air", "sunlight", "group friendly"],
+    "restaurant_id": 1
+  },
+  {
+    "table_code": "DUB-04",
+    "capacity": 2,
+    "location": "Corner",
+    "features": ["private", "quiet"],
+    "restaurant_id": 1
+  },
+  {
+    "table_code": "DUB-05",
+    "capacity": 4,
+    "location": "Window",
+    "features": ["view", "romantic"],
     "restaurant_id": 1
   }
 ]
